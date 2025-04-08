@@ -1,139 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { deleteUser, GetAllUsers } from '../apicalls/users';
 
+// Main Component
 const User = () => {
-  const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-    { id: 3, name: 'Alice Johnson', email: 'alice@example.com' },
-  ]);
+  const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
-  const [newUser, setNewUser] = useState({ name: '', email: '' });
-  const [editingUser, setEditingUser] = useState(null);
+  useEffect(() => {
+    // Fetch users from API using the GetAllUsers function
+    const fetchUsers = async () => {
+      try {
+        const response = await GetAllUsers();
+        setUsers(response.data);
+        console.log("user response--->", response);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
 
-  const handleAddUser = () => {
-    if (newUser.name && newUser.email) {
-      setUsers([...users, { id: Date.now(), ...newUser }]);
-      setNewUser({ name: '', email: '' });
+    fetchUsers();
+  }, []);
+
+  const handleDeleteUser = async (id) => {
+    try {
+      await deleteUser(id);
+      setUsers(users.filter((user) => user._id !== id));
+      console.log(`User with id ${id} deleted successfully.`);
+    } catch (error) {
+      console.error('Error deleting user:', error);
     }
   };
 
-  const handleDeleteUser = (id) => {
-    setUsers(users.filter((user) => user.id !== id));
-  };
-
   const handleEditUser = (user) => {
-    setEditingUser(user);
-  };
-
-  const handleUpdateUser = () => {
-    setUsers(
-      users.map((user) =>
-        user.id === editingUser.id ? editingUser : user
-      )
-    );
-    setEditingUser(null);
+    navigate(`/user/${user._id}`, { state: { user } });
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">User Management</h1>
-
-      {/* Add User Form */}
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Add User</h2>
-        <div className="flex gap-4">
-          <input
-            type="text"
-            placeholder="Name"
-            value={newUser.name}
-            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-            className="border p-2 rounded w-1/3"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={newUser.email}
-            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-            className="border p-2 rounded w-1/3"
-          />
-          <button
-            onClick={handleAddUser}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+    <div className="min-h-screen max-w-screen bg-gray-100 p-8">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="flex justify-between items-center px-8 py-4 border-b">
+          <h1 className="text-3xl font-bold text-gray-800">Users</h1>
+          <Link
+            to="/user/add_user"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-colors duration-200"
           >
-            Add
-          </button>
+            Add User
+          </Link>
+        </div>
+
+        <div className="p-8">
+          <table className="w-full text-left">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-4 font-medium text-gray-500">#</th>
+                <th className="px-6 py-4 font-medium text-gray-500">Name</th>
+                <th className="px-6 py-4 font-medium text-gray-500">Email</th>
+                <th className="px-6 py-4 font-medium text-gray-500">Role</th>
+                <th className="px-6 py-4 font-medium text-gray-500 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user, index) => (
+                <tr key={user._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 border-t">{index + 1}</td>
+                  <td className="px-6 py-4 border-t">{user.username}</td>
+                  <td className="px-6 py-4 border-t">{user.email}</td>
+                  <td className="px-6 py-4 border-t">{user.role || 'N/A'}</td>
+                  <td className="px-6 py-4 border-t text-right space-x-2">
+                    <button
+                      onClick={() => handleEditUser(user)}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUser(user._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-
-      {/* User Table */}
-      <table className="table-auto w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border border-gray-300 px-4 py-2">ID</th>
-            <th className="border border-gray-300 px-4 py-2">Name</th>
-            <th className="border border-gray-300 px-4 py-2">Email</th>
-            <th className="border border-gray-300 px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td className="border border-gray-300 px-4 py-2">{user.id}</td>
-              <td className="border border-gray-300 px-4 py-2">
-                {editingUser?.id === user.id ? (
-                  <input
-                    type="text"
-                    value={editingUser.name}
-                    onChange={(e) =>
-                      setEditingUser({ ...editingUser, name: e.target.value })
-                    }
-                    className="border p-1 rounded"
-                  />
-                ) : (
-                  user.name
-                )}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {editingUser?.id === user.id ? (
-                  <input
-                    type="email"
-                    value={editingUser.email}
-                    onChange={(e) =>
-                      setEditingUser({ ...editingUser, email: e.target.value })
-                    }
-                    className="border p-1 rounded"
-                  />
-                ) : (
-                  user.email
-                )}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {editingUser?.id === user.id ? (
-                  <button
-                    onClick={handleUpdateUser}
-                    className="bg-green-500 text-white px-2 py-1 rounded mr-2"
-                  >
-                    Save
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleEditUser(user)}
-                    className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
-                  >
-                    Edit
-                  </button>
-                )}
-                <button
-                  onClick={() => handleDeleteUser(user.id)}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };

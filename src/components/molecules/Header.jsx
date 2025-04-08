@@ -5,6 +5,8 @@ import { IoIosSearch } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 
 const Header = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+
   return (
     <div className='header bg-gray-700 text-white w-full p-4 h-[60px] flex items-center justify-between'>
       <div className='flex items-center'>
@@ -25,8 +27,8 @@ const Header = () => {
         <CiBellOn size={24} className='text-gray-400 hover:text-white transition' />
         <div className='flex items-center space-x-3'>
           <div>
-            <p className='font-semibold'>Anima Agrawal</p>
-            <p className='text-sm text-gray-400'>UP, India</p>
+            <p className='font-semibold'>{user?.username || 'Guest'}</p>
+            <p className='text-sm text-gray-400'>{user?.role || "user"}</p>
           </div>
           <CgProfile size={30} className='text-gray-400 hover:text-white transition' />
         </div>

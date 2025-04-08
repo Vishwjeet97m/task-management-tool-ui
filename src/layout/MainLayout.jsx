@@ -5,17 +5,17 @@ import Footer from "../components/molecules/Footer";
 
 const MainLayout = () => {
   return (
-    <div className="app-container ">
-        <Header />
+    <div className="app-container">
+      <Header />
       <div className="content flex flex-row">
-      <Sidebar />
-        <div className="">
-        <main>
-          <Outlet /> {/* Renders the matched protected route */}
-        </main>
-        <Footer />
+        <Sidebar />
+        <div className="flex-1 p-4"> {/* Ensure this container takes the remaining width */}
+          <main>
+            <Outlet /> {/* Renders the matched protected route */}
+          </main>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

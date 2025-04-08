@@ -9,6 +9,8 @@ import Signup from "./pages/Signup.jsx";
 import Project from "./pages/Project.jsx";
 import ProjectDetails from './pages/ProjectDetails.jsx';
 import User from './pages/User.jsx';
+import Task from './pages/Task.jsx';
+import TaskDetails from './pages/TaskDetails.jsx';
 import UserDetails from './pages/UserDetails.jsx';
 import store from "./redux/store.js";
 
@@ -28,11 +30,12 @@ const App = () => {
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/users" element={<User />} />
-              <Route path="/user/:id" element={<UserDetails />} />
+              <Route path="/user/:id" element={<UserDetails />} />e
+              <Route path="/user/add_user" element={<UserDetails />} />
               <Route path="/projects" element={<Project />} />
               <Route path="/project/:id" element={<ProjectDetails />} />
-              <Route path="/tasks" element={<ProjectDetails />} />
-              <Route path="/tasks/:id" element={<ProjectDetails />} />
+              <Route path="/tasks" element={<Task/>} />
+              <Route path="/tasks/:id" element={<TaskDetails />} />
             </Route>
           </Route>
 
