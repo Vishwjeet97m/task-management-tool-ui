@@ -1,17 +1,14 @@
 import { apiRequest } from ".";
 
-export const CreateProject = async (project) => apiRequest("post", "/api/projects/create-project", project);
 
-export const GetAllProjects = async (filters) => apiRequest("post", "/api/projects/get-all-projects", filters);
+const BASE_URL = "http://localhost:5003/api"
+
+export const CreateProject = async (project) => apiRequest("post",`${BASE_URL}/project`, project);
+
+export const getAllProjects = async () => apiRequest("get", `${BASE_URL}/project`);
 
 export const GetProjectById = async (id) => apiRequest("post", "/api/projects/get-project-by-id", { _id: id });
 
-export const EditProject = async (project) => apiRequest("post", "/api/projects/edit-project", project);
+export const editProject = async (project, id) => apiRequest("patch", `${BASE_URL}/project/${id}`, project);
 
-export const DeleteProject = async (id) => apiRequest("post", "/api/projects/delete-project", { _id: id });
-
-export const GetProjectsByRole = async (userId) => apiRequest("post", "/api/projects/get-projects-by-role", { userId });
-
-export const AddMemberToProject = async (data) => apiRequest("post", "/api/projects/add-member", data);
-
-export const RemoveMemberFromProject = async (data) => apiRequest("post", "/api/projects/remove-member", data);
+export const deleteProject = async (id) => apiRequest("delete", `${BASE_URL}/project/${id}`);
