@@ -106,14 +106,19 @@ const ProjectDetails = () => {
             <label htmlFor="status" className="block text-gray-700 font-medium mb-2">
               Status
             </label>
-            <input
-              type="text"
+            <select
               name="status"
               id="status"
               value={form.status}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
-            />
+            >
+              <option value="" disabled>
+                Select status
+              </option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
             {error.status && <p className="text-red-500 text-sm">{error.status}</p>}
           </div>
           <div className="flex justify-end space-x-4">

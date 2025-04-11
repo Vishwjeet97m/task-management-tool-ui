@@ -7,6 +7,14 @@ import { CgProfile } from "react-icons/cg";
 const Header = () => {
   const user = JSON.parse(localStorage.getItem('user'));
 
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.reload(); // Reload the page to reflect logout
+  };
+
   return (
     <div className='header bg-gray-700 text-white w-full p-4 h-[60px] flex items-center justify-between'>
       <div className='flex items-center'>
@@ -25,16 +33,31 @@ const Header = () => {
           />
         </div>
         <CiBellOn size={24} className='text-gray-400 hover:text-white transition' />
-        <div className='flex items-center space-x-3'>
-          <div>
-            <p className='font-semibold'>{user?.username || 'Guest'}</p>
-            <p className='text-sm text-gray-400'>{user?.role || "user"}</p>
+        <div className='relative'>
+          <div
+            className='flex items-center space-x-3 cursor-pointer'
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            <div>
+              <p className='font-semibold'>{user?.username || 'Guest'}</p>
+              <p className='text-sm text-gray-400'>{user?.role || "user"}</p>
+            </div>
+            <CgProfile size={30} className='text-gray-400 hover:text-white transition' />
           </div>
-          <CgProfile size={30} className='text-gray-400 hover:text-white transition' />
+          {dropdownOpen && (
+            <div className='absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg'>
+              <button
+                className='block w-full text-left px-4 py-2 hover:bg-gray-200'
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Header

@@ -50,7 +50,7 @@ const Sidebar = () => {
               isActive('/tasks') ? 'bg-gray-700' : 'hover:bg-gray-700'
             }`}
           >
-            Tasks
+            Tasks Status
           </a>
         </li>
       </ul>

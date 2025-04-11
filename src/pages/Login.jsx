@@ -99,7 +99,6 @@ const Login = () => {
                 <input
                   type="email"
                   name="email"
-
                   placeholder="Email"
                   id="email"
                   value={form.email}
@@ -145,7 +144,10 @@ const Login = () => {
             </form>
             <p className="mt-4 text-center text-gray-600">
               Don't have an account?{" "}
-              <span className="text-black font-medium underline cursor-pointer">
+              <span
+                className="text-black font-medium underline cursor-pointer"
+                onClick={() => navigate("/signup")}
+              >
                 Sign up for free
               </span>
             </p>

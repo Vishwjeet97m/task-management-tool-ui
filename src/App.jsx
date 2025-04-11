@@ -13,6 +13,7 @@ import Task from './pages/Task.jsx';
 import TaskDetails from './pages/TaskDetails.jsx';
 import UserDetails from './pages/UserDetails.jsx';
 import store from "./redux/store.js";
+import TasksByProject from "./pages/TasksByProjects.jsx";
 
 const App = () => {
   return (
@@ -37,6 +38,8 @@ const App = () => {
               <Route path="/project/add_project" element={<ProjectDetails />} />
               <Route path="/tasks" element={<Task/>} />
               <Route path="/tasks/:id" element={<TaskDetails />} />
+              <Route path="/project/:id/tasks" element={<TasksByProject />} />
+              <Route path="/tasks/add_task" element={<TaskDetails />} />
             </Route>
           </Route>
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getAllProjects, deleteProject } from '../apicalls/projects.js';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllProjects, deleteProject } from "../apicalls/projects.js";
 
 const Project = () => {
   const [projects, setProjects] = useState([]);
@@ -14,7 +14,7 @@ const Project = () => {
         setProjects(response.data);
         console.log("project response--->", response);
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        console.error("Error fetching projects:", error);
       }
     };
 
@@ -27,7 +27,7 @@ const Project = () => {
       setProjects(projects.filter((project) => project._id !== id));
       console.log(`Project with id ${id} deleted successfully.`);
     } catch (error) {
-      console.error('Error deleting project:', error);
+      console.error("Error deleting project:", error);
     }
   };
 
@@ -55,19 +55,35 @@ const Project = () => {
               <tr>
                 <th className="px-6 py-4 font-medium text-gray-500">#</th>
                 <th className="px-6 py-4 font-medium text-gray-500">Name</th>
-                <th className="px-6 py-4 font-medium text-gray-500">Description</th>
-                <th className="px-6 py-4 font-medium text-gray-500">Created By</th>
+                <th className="px-6 py-4 font-medium text-gray-500">
+                  Description
+                </th>
+                <th className="px-6 py-4 font-medium text-gray-500">
+                  Created By
+                </th>
                 <th className="px-6 py-4 font-medium text-gray-500">Status</th>
-                <th className="px-6 py-4 font-medium text-gray-500 text-right">Actions</th>
+                <th className="px-6 py-4 font-medium text-gray-500 text-right">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {projects.map((project, index) => (
-                <tr key={project._id.$oid} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={project._id.$oid}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-6 py-4 border-t">{index + 1}</td>
-                  <td className="px-6 py-4 border-t">{project.name}</td>
+                  <td
+                    className="px-6 py-4 border-t text-blue-600 hover:underline cursor-pointer"
+                    onClick={() => navigate(`/project/${project._id}/tasks`)}
+                  >
+                    {project.name}
+                  </td>
                   <td className="px-6 py-4 border-t">{project.description}</td>
-                  <td className="px-6 py-4 border-t">{project.owner?.username || 'N/A'}</td>
+                  <td className="px-6 py-4 border-t">
+                    {project.owner?.username || "N/A"}
+                  </td>
                   <td className="px-6 py-4 border-t">{project.status}</td>
                   <td className="px-6 py-4 border-t text-right space-x-2">
                     <button

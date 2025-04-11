@@ -1,17 +1,24 @@
 import { apiRequest } from ".";
 
+
+const BASE_URL = "http://localhost:5002/api";
+
 export const CreateTask = async (task) =>
   apiRequest("post", "/api/tasks/create-task", task);
 
-export const GetAllTasks = async (filters) =>
-  apiRequest("post", "/api/tasks/get-all-tasks", filters);
+export const getAllTasks = async () =>
+  apiRequest("get", `${BASE_URL}/task` );
 
-export const UpdateTask = async (task) =>
-  apiRequest("post", "/api/tasks/update-task", task);
+export const getTaskById = async (id) =>
+  apiRequest("get", `${BASE_URL}/task/${id}`);
 
-export const DeleteTask = async (id) =>
-  apiRequest("post", "/api/tasks/delete-task", { _id: id });
+export const deleteTask = async (id) =>
+  apiRequest("delete", `${BASE_URL}/task/${id}`);
 
-export const UploadImage = async (payload) => {
-  return apiRequest("post", "/api/tasks/upload-image", payload);
+export const getTasksByProject = async (id) => {
+  return apiRequest("get", `${BASE_URL}/task/project/${id}`);
+};
+
+export const updateTaskById = async (task, id) => {
+  return apiRequest("patch", `${BASE_URL}/task/${id}`, task);
 };
