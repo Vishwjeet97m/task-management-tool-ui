@@ -19,11 +19,11 @@ const Header = () => {
     <div className='header bg-gray-700 text-white w-full p-4 h-[60px] flex items-center justify-between'>
       <div className='flex items-center'>
         <img src={logo} alt="Logo" className='h-8 w-8' />
-        <p className='ml-3 text-xl font-medium'>Task Management Tool</p>
+        <p className='ml-3 text-xl font-medium hidden sm:block'>Task Management Tool</p>
       </div>
-      <div className='flex items-center space-x-6'>
+      <div className='flex items-center space-x-4 sm:space-x-6'>
         {/* Search input */}
-        <div className='flex items-center bg-gray-300 rounded px-3 py-1'>
+        <div className='hidden sm:flex items-center bg-gray-300 rounded px-3 py-1'>
           <IoIosSearch size={20} className='text-gray-400' />
           <input
             className='ml-2 bg-transparent outline-none text-black placeholder-gray-400'
@@ -38,7 +38,7 @@ const Header = () => {
             className='flex items-center space-x-3 cursor-pointer'
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
-            <div>
+            <div className='hidden sm:block'>
               <p className='font-semibold'>{user?.username || 'Guest'}</p>
               <p className='text-sm text-gray-400'>{user?.role || "user"}</p>
             </div>

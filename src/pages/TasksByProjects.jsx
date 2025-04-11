@@ -41,10 +41,13 @@ const TasksByProject = () => {
    };
 
    return (
-      <div className="max-w-4xl mx-auto mt-10 px-4">
-         <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-800">📋 Tasks by Project</h2>
-            <Link to={'/tasks/add_task'} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+      <div className="max-w-4xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
+         <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center sm:text-left">📋 Tasks by Project</h2>
+            <Link
+               to={'/tasks/add_task'}
+               className="mt-4 sm:mt-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm sm:text-base"
+            >
                Add Task
             </Link>
          </div>
@@ -60,25 +63,33 @@ const TasksByProject = () => {
                      onClick={() => toggleAccordion(index)}
                      className="w-full flex justify-between items-center p-5 text-left rounded-t-2xl bg-gradient-to-r from-blue-100 to-blue-50 hover:from-blue-200 hover:to-blue-100 transition-colors"
                   >
-                     <span className="text-lg font-semibold text-blue-800">{task.task_name}</span>
-                     <span className="text-2xl font-bold text-blue-600">{openIndex === index ? '−' : '+'}</span>
+                     <span className="text-sm sm:text-lg font-semibold text-blue-800">{task.task_name}</span>
+                     <span className="text-xl sm:text-2xl font-bold text-blue-600">{openIndex === index ? '−' : '+'}</span>
                   </button>
                   {openIndex === index && (
-                     <div className="px-6 py-4 bg-white rounded-b-2xl border-t border-gray-200">
-                        <p className="mb-2"><strong className="text-gray-700">📝 Description:</strong> {task.description}</p>
-                        <p className="mb-2"><strong className="text-gray-700">📌 Status:</strong> <span className="capitalize">{task.status}</span></p>
-                        <p className="mb-2"><strong className="text-gray-700">👤 Assigned To:</strong> {task.assignee?.username || 'N/A'}</p>
-                        <p className="mb-2"><strong className="text-gray-700">👤 Assigned By:</strong> {task.assigner?.username || 'N/A'}</p>
-                        <div className="flex justify-end space-x-4 mt-4">
+                     <div className="px-4 sm:px-6 py-4 bg-white rounded-b-2xl border-t border-gray-200">
+                        <p className="mb-2 text-sm sm:text-base">
+                           <strong className="text-gray-700">📝 Description:</strong> {task.description}
+                        </p>
+                        <p className="mb-2 text-sm sm:text-base">
+                           <strong className="text-gray-700">📌 Status:</strong> <span className="capitalize">{task.status}</span>
+                        </p>
+                        <p className="mb-2 text-sm sm:text-base">
+                           <strong className="text-gray-700">👤 Assigned To:</strong> {task.assignee?.username || 'N/A'}
+                        </p>
+                        <p className="mb-2 text-sm sm:text-base">
+                           <strong className="text-gray-700">👤 Assigned By:</strong> {task.assigner?.username || 'N/A'}
+                        </p>
+                        <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 mt-4">
                            <button
                               onClick={() => handleEdit(task._id)}
-                              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm sm:text-base"
                            >
                               Edit
                            </button>
                            <button
                               onClick={() => handleDelete(task._id)}
-                              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm sm:text-base"
                            >
                               Delete
                            </button>

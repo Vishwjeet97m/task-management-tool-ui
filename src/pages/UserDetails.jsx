@@ -122,14 +122,17 @@ const UserDetails = () => {
             <label htmlFor="role" className="block text-gray-700 font-medium mb-2">
               Role
             </label>
-            <input
-              type="text"
+            <select
               name="role"
               id="role"
               value={form.role}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
-            />
+            >
+              <option value="">Select Role</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
             {error.role && <p className="text-red-500 text-sm">{error.role}</p>}
           </div>
           {isAddMode && (

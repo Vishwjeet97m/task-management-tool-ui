@@ -15,6 +15,7 @@ const Task = () => {
         const response = await getAllTasks();
         const tasks = response.data;
         setTasks(tasks);
+        console.log("tasks-->", tasks)
         setColumns({
           todo: tasks.filter((task) => task.status === 'todo'),
           inProgress: tasks.filter((task) => task.status === 'inProgress'),
@@ -51,8 +52,8 @@ const Task = () => {
   };
 
   return (
-    <div className="min-h-screen max-w-screen bg-gray-100 p-8">
-      <div className="grid grid-cols-3 gap-4">
+    <div className="min-h-screen max-w-screen bg-gray-100 p-4 sm:p-6 md:p-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Object.keys(columns).map((status) => (
           <div
             key={status}
@@ -60,11 +61,11 @@ const Task = () => {
             onDragOver={allowDrop}
             onDrop={(e) => handleDrop(e, status)}
           >
-            <h2 className="text-xl font-bold mb-4 capitalize">{status}</h2>
+            <h2 className="text-lg sm:text-xl font-bold mb-4 capitalize">{status}</h2>
             {columns[status].map((task) => (
               <div
                 key={task._id}
-                className={`p-4 rounded mb-2 cursor-pointer ${
+                className={`p-4 rounded mb-2 cursor-pointer relative ${
                   task.status === 'inProgress'
                     ? 'bg-yellow-200'
                     : task.status === 'done'
@@ -74,8 +75,11 @@ const Task = () => {
                 draggable
                 onDragStart={(e) => handleDragStart(e, task)}
               >
-                <h3 className="font-bold">{task.task_name}</h3>
-                <p>{task.description}</p>
+                <h3 className="font-bold text-sm sm:text-base">{task.task_name}</h3>
+                <p className="text-xs sm:text-sm">{task.description}</p>
+                <span className="absolute bottom-1 right-1 text-xs sm:text-sm text-gray-600">
+                  {task.assignee ? `Assigned to: ${task.assignee.username}` : 'Unassigned'}
+                </span>
               </div>
             ))}
           </div>

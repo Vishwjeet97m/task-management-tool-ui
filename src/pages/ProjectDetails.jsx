@@ -6,7 +6,7 @@ const ProjectDetails = () => {
   const location = useLocation();
   const isAddMode = location.pathname.includes('add_project');
   const navigate = useNavigate();
-  const project = React.useMemo(() => location.state?.project || {}, [location.state]); // Get project data from state
+  const project = React.useMemo(() => location.state?.project || {}, [location.state]);
   const [form, setForm] = useState({ name: '', description: '', status: '' });
   const [error, setError] = useState({ name: '', description: '', status: '' });
 
@@ -54,14 +54,14 @@ const ProjectDetails = () => {
 
     try {
       if (isAddMode) {
-        await CreateProject(form); // Call createProject API for adding a new project
+        await CreateProject(form);
         alert('Project added successfully!');
       } else {
         const projectId = project._id;
-        await editProject(form, projectId); // Call editProject API for editing an existing project
+        await editProject(form, projectId);
         alert('Project details updated successfully!');
       }
-      navigate('/projects'); // Redirect back to project listing page
+      navigate('/projects');
     } catch (error) {
       console.error('Error saving project details:', error);
       alert('Failed to save project details. Please try again.');
@@ -69,9 +69,9 @@ const ProjectDetails = () => {
   };
 
   return (
-    <div className="min-h-screen max-w-screen bg-gray-100 p-8">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden p-4 sm:p-8 max-w-4xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
           {isAddMode ? 'Add New Project' : 'Edit Project Details'}
         </h1>
         <form onSubmit={handleSubmit} noValidate>
@@ -85,7 +85,7 @@ const ProjectDetails = () => {
               id="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {error.name && <p className="text-red-500 text-sm">{error.name}</p>}
           </div>
@@ -98,7 +98,7 @@ const ProjectDetails = () => {
               id="description"
               value={form.description}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {error.description && <p className="text-red-500 text-sm">{error.description}</p>}
           </div>
@@ -111,7 +111,7 @@ const ProjectDetails = () => {
               id="status"
               value={form.status}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="" disabled>
                 Select status
@@ -121,17 +121,17 @@ const ProjectDetails = () => {
             </select>
             {error.status && <p className="text-red-500 text-sm">{error.status}</p>}
           </div>
-          <div className="flex justify-end space-x-4">
+          <div className="flex flex-col sm:flex-row justify-end space-y-4 sm:space-y-0 sm:space-x-4">
             <button
               type="button"
               onClick={() => navigate('/projects')}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded w-full sm:w-auto"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full sm:w-auto"
             >
               {isAddMode ? 'Add Project' : 'Update'}
             </button>

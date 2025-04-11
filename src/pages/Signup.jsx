@@ -69,28 +69,38 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex flex-row h-screen w-screen overflow-hidden">
+    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden">
       {/* left section */}
-      <div className="flex flex-1/2 flex-col mt-10 mr-5 overflow-hidden">
-        <div className="flex flex-row items-center ms-14">
-          <img className="font-medium " src={logo} alt="" />
+      <div className="flex flex-1 flex-col mt-10 md:mt-0 md:mr-5 overflow-hidden items-center md:items-start">
+        <div className="flex flex-row items-center md:ms-14">
+          <img className="font-medium" src={logo} alt="" />
           <p className="text-[#0B3051] text-2xl font-medium">AProjectO</p>
         </div>
-        <div className="overflow-hidden">
-          <img className="w-[763px] h-[865px] object-contain" src={loginImage} alt="" />
+        <div className="overflow-hidden mt-6 md:mt-0">
+          <img
+            className="w-full md:w-[763px] h-auto md:h-[865px] object-contain"
+            src={loginImage}
+            alt=""
+          />
         </div>
       </div>
 
       {/* right section */}
-      <div className="flex flex-1/2 flex-col items-center mt-10 overflow-hidden">
+      <div className="flex flex-1 flex-col items-center mt-10 md:mt-0 overflow-hidden px-4 md:px-0">
         <div className="flex flex-row items-center gap-2">
           <img src={logo2} alt="" />
-          <p className="font-medium text-2xl">Asite Product System</p>
+          <p className="font-medium text-2xl text-center md:text-left">
+            Asite Product System
+          </p>
         </div>
-        <div className="flex flex-col mt-32 w-[350px] overflow-hidden">
+        <div className="flex flex-col mt-10 md:mt-32 w-full max-w-[350px] overflow-hidden">
           <div className="mt-10">
-            <p className="text-3xl font-semibold">Create Account</p>
-            <p className="text-black font-normal">Please fill in your details to sign up.</p>
+            <p className="text-3xl font-semibold text-center md:text-left">
+              Create Account
+            </p>
+            <p className="text-black font-normal text-center md:text-left">
+              Please fill in your details to sign up.
+            </p>
             <form className="mt-6" onSubmit={handleSubmit} noValidate>
               <div className="mb-4">
                 <input
@@ -99,11 +109,13 @@ const Signup = () => {
                   placeholder="Username"
                   value={form.username}
                   onChange={handleChange}
-                  className={`w-full p-2  border-b-2 ${
+                  className={`w-full p-2 border-b-2 ${
                     error.username ? "border-red-500" : "border-black"
                   } outline-none placeholder-black`}
                 />
-                {error.username && <p className="text-red-500 text-sm">{error.username}</p>}
+                {error.username && (
+                  <p className="text-red-500 text-sm">{error.username}</p>
+                )}
               </div>
 
               <div className="mb-4">
@@ -117,7 +129,9 @@ const Signup = () => {
                     error.email ? "border-red-500" : "border-black"
                   } outline-none placeholder-black`}
                 />
-                {error.email && <p className="text-red-500 text-sm">{error.email}</p>}
+                {error.email && (
+                  <p className="text-red-500 text-sm">{error.email}</p>
+                )}
               </div>
 
               <div className="mb-4">
@@ -131,7 +145,9 @@ const Signup = () => {
                     error.password ? "border-red-500" : "border-black"
                   } outline-none placeholder-black`}
                 />
-                {error.password && <p className="text-red-500 text-sm">{error.password}</p>}
+                {error.password && (
+                  <p className="text-red-500 text-sm">{error.password}</p>
+                )}
               </div>
               <button
                 type="submit"
