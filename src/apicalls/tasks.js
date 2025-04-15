@@ -3,8 +3,10 @@ import { apiRequest } from ".";
 
 const BASE_URL = "http://localhost:5002/api";
 
-export const CreateTask = async (task) =>
-  apiRequest("post", "/api/tasks/create-task", task);
+export const CreateTask = async (task) => {
+  console.log("task-->", task);
+  return apiRequest("post", `${BASE_URL}/task`, task);
+};
 
 export const getAllTasks = async () =>
   apiRequest("get", `${BASE_URL}/task` );

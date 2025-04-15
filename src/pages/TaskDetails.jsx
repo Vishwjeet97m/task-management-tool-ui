@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTaskById, CreateTask, updateTaskById } from "../apicalls/tasks";
 import { GetAllUsers } from "../apicalls/users";
+import { FaFilePdf, FaTimes } from "react-icons/fa";
 import { getAllProjects } from "../apicalls/projects";
+import { uploadFilesToS3 } from "../utils/commonUtils";
 
 const TaskDetails = () => {
   const { id } = useParams();
@@ -14,7 +16,7 @@ const TaskDetails = () => {
     status: "",
     assigner: "",
     assignee: "",
-    project:""
+    project: "",
   });
   const [error, setError] = useState({
     task_name: "",
@@ -22,12 +24,13 @@ const TaskDetails = () => {
     status: "",
     assigner: "",
     assignee: "",
-    project:""
+    project: "",
   });
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [attachments, setAttachments] = useState([]);
+  const [existingAttachments, setExistingAttachments] = useState([]);
+  const [newAttachments, setNewAttachments] = useState([]);
 
   useEffect(() => {
     // Get user from local storage and check role
@@ -52,7 +55,7 @@ const TaskDetails = () => {
             assignee: task.assignee?._id || task.assignee || "",
             project: task.project?._id || task.assignee || "",
           });
-          setAttachments(task.attachments || []);
+          setExistingAttachments(task.attachments || []);
         } catch (error) {
           console.error("Error fetching task:", error);
           alert("Failed to fetch task details.");
@@ -65,6 +68,16 @@ const TaskDetails = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    setNewAttachments(Array.from(e.target.files));
+  };
+
+  const handleRemoveFile = (indexToRemove) => {
+    setNewAttachments((prevFiles) =>
+      prevFiles.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   const validateForm = () => {
@@ -92,7 +105,7 @@ const TaskDetails = () => {
       isValid = false;
     }
 
-    if (!form.assigner) {
+    if (!isAddMode &&!form.assigner) {
       newError.assigner = "Assigner is required.";
       isValid = false;
     }
@@ -116,26 +129,31 @@ const TaskDetails = () => {
     if (!validateForm()) return;
 
     try {
-      const formData = new FormData();
-      formData.append("task_name", form.task_name);
-      formData.append("description", form.description);
-      formData.append("status", form.status);
-      formData.append("assigner", form.assigner);
-      formData.append("assignee", form.assignee);
-      formData.append("project", form.project);
+      const taskData = {
+        task_name: form.task_name,
+        description: form.description,
+        status: form.status,
+        assignee: form.assignee,
+        project: form.project,
+        attachments: newAttachments.map((file) => ({
+          fileName: file.name,
+          fileType: file.type,
+        })),
+      };
 
-      attachments.forEach((file) => {
-        formData.append("attachments", file);
-      });
-
+      let response;
       if (isAddMode) {
-        await CreateTask(formData); // Must handle FormData in backend
-        alert("Task added successfully!");
+       response = await CreateTask(taskData); // Send JSON data in body
       } else {
-        await updateTaskById(formData, id); // Update call with files
-        alert("Task details updated successfully!");
+        response = await updateTaskById(taskData, id); // Update call with JSON data
       }
+      
+      const uploadUrls = response.data.uploadUrls;
 
+    // ✅ Upload files using the helper function
+    await uploadFilesToS3(newAttachments, uploadUrls);
+
+    alert("Task saved and files uploaded successfully!");
       navigate(-1);
     } catch (error) {
       console.error("Error saving task details:", error);
@@ -183,7 +201,9 @@ const TaskDetails = () => {
               value={form.project}
               onChange={handleChange}
               className={`w-full p-2 border rounded ${
-                !isAddMode ? "bg-gray-200 cursor-not-allowed" : "border-gray-300"
+                !isAddMode
+                  ? "bg-gray-200 cursor-not-allowed"
+                  : "border-gray-300"
               }`}
               disabled={!isAddMode}
             >
@@ -251,6 +271,7 @@ const TaskDetails = () => {
               className="w-full p-2 border border-gray-300 rounded"
             >
               <option value="">Select Status</option>
+              <option value="todo">To do</option>
               <option value="in-progress">In Progress</option>
               <option value="completed">Completed</option>
             </select>
@@ -258,37 +279,38 @@ const TaskDetails = () => {
               <p className="text-red-500 text-sm">{error.status}</p>
             )}
           </div>
-          {!isAddMode &&
-          <div className="mb-4">
-          <label
-            htmlFor="assigner"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Assigner
-          </label>
-          <select
-            name="assigner"
-            id="assigner"
-            value={form.assigner}
-            onChange={handleChange}
-            className={`w-full p-2 border rounded ${
-              !isAdmin || !isAddMode
-                ? "bg-gray-200 cursor-not-allowed"
-                : "border-gray-300"
-            }`}
-            disabled={!isAdmin || !isAddMode} // Disable if not admin
-          >
-            <option value="">Select Assigner</option>
-            {users.map((user) => (
-              <option key={user._id} value={user._id}>
-                {user.username}
-              </option>
-            ))}
-          </select>
-          {error.assigner && (
-            <p className="text-red-500 text-sm">{error.assigner}</p>
+          {!isAddMode && (
+            <div className="mb-4">
+              <label
+                htmlFor="assigner"
+                className="block text-gray-700 font-medium mb-2"
+              >
+                Assigner
+              </label>
+              <select
+                name="assigner"
+                id="assigner"
+                value={form.assigner}
+                onChange={handleChange}
+                className={`w-full p-2 border rounded ${
+                  !isAdmin || !isAddMode
+                    ? "bg-gray-200 cursor-not-allowed"
+                    : "border-gray-300"
+                }`}
+                disabled={!isAdmin || !isAddMode} // Disable if not admin
+              >
+                <option value="">Select Assigner</option>
+                {users.map((user) => (
+                  <option key={user._id} value={user._id}>
+                    {user.username}
+                  </option>
+                ))}
+              </select>
+              {error.assigner && (
+                <p className="text-red-500 text-sm">{error.assigner}</p>
+              )}
+            </div>
           )}
-        </div> }
           <div className="mb-4">
             <label
               htmlFor="assignee"
@@ -317,13 +339,13 @@ const TaskDetails = () => {
               <p className="text-red-500 text-sm">{error.assignee}</p>
             )}
           </div>
-          {!isAddMode && attachments.length > 0 && (
+          {!isAddMode && existingAttachments.length > 0 && (
             <div className="mb-4">
               <h3 className="text-gray-700 font-medium mb-2">
                 Existing Attachments
               </h3>
               <ul className="list-disc list-inside text-sm text-blue-600">
-                {attachments.map((file, index) => (
+                {existingAttachments.map((file, index) => (
                   <li key={index}>
                     <a
                       href={file.presignedUrl}
@@ -338,30 +360,46 @@ const TaskDetails = () => {
             </div>
           )}
 
-          <div className="mb-4">
-            <label
-              htmlFor="attachments"
-              className="block text-gray-700 font-medium mb-2"
+<div className="mb-6">
+      <label
+        htmlFor="attachments"
+        className="block text-gray-800 font-semibold mb-2"
+      >
+        Attachments (PDF only)
+      </label>
+      <input
+        type="file"
+        id="attachments"
+        name="attachments"
+        accept="application/pdf"
+        multiple
+        onChange={handleFileChange}
+        className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+      />
+
+      {newAttachments.length > 0 && (
+        <ul className="mt-4 space-y-2 text-sm text-gray-700">
+          {newAttachments.map((file, idx) => (
+            <li
+              key={idx}
+              className="flex items-center justify-between px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm"
             >
-              Attachments (PDF only)
-            </label>
-            <input
-              type="file"
-              id="attachments"
-              name="attachments"
-              accept="application/pdf"
-              multiple
-              onChange={(e) => setAttachments(Array.from(e.target.files))}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-            {attachments.length > 0 && (
-              <ul className="mt-2 text-sm text-gray-600 list-disc list-inside">
-                {attachments.map((file, idx) => (
-                  <li key={idx}>{file.name}</li>
-                ))}
-              </ul>
-            )}
-          </div>
+              <div className="flex items-center gap-2">
+                <FaFilePdf className="text-red-600 w-5 h-5" />
+                <span className="truncate max-w-xs">{file.name}</span>
+              </div>
+              <button
+                onClick={() => handleRemoveFile(idx)}
+                className="text-gray-400 hover:text-red-600 transition-colors"
+                title="Remove file"
+              >
+                <FaTimes />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
           <div className="flex justify-end space-x-4">
             <button
               type="button"
